@@ -12,6 +12,11 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import axios from "axios";
+import { ADDITEM } from "@/lib/APIsData";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { getSession, useSession } from "next-auth/react";
 
 type FormData = {
   name: string;
@@ -20,10 +25,14 @@ type FormData = {
   size: string;
   quantity: number;
   price: number;
+  extraCost: number;
 };
 
 const Page = () => {
+  const session = useSession();
+  console.log(session.data);
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     name: "",
     imageUrl: "",
@@ -31,6 +40,7 @@ const Page = () => {
     size: "",
     quantity: 1,
     price: 0,
+    extraCost: 0,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,14 +53,25 @@ const Page = () => {
     setFormData((prev) => ({ ...prev, imageUrl: file }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Add logic to send the data to backend
     console.log(formData);
-    toast({
-      title: "Item added successfully!",
-      description: "The new item is now listed.",
-    });
+    // try {
+    //   console.log(formData);
+    //   setLoading(true);
+    //   // const response = await axios.post(ADDITEM, { formData });
+    //   // console.log(response.data);
+    //   toast({
+    //     title: "Item added successfully!",
+    //     description: "The new item is now listed.",
+    //   });
+    // } catch (error) {
+    //   console.log(error);
+    //   toast({ title: "Error while adding" });
+    //   setLoading(false);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   return (
@@ -134,6 +155,20 @@ const Page = () => {
             </SelectContent>
           </Select>
         </div>
+        {/* {formData?.size !== "small" && formData?.size !== "" && (
+          <div>
+            <Label htmlFor="size">Extra Price of Size</Label>
+            <Input
+              id="extraCost"
+              name="extraCost"
+              type="number"
+              value={formData.extraCost}
+              onChange={handleInputChange}
+              className="mt-2"
+              required
+            />
+          </div>
+        )} */}
 
         <div>
           <Label htmlFor="quantity">Quantity</Label>
@@ -150,7 +185,7 @@ const Page = () => {
         </div>
 
         <div>
-          <Label htmlFor="price">Price (per meal)</Label>
+          <Label htmlFor="price">Price (*per small item)</Label>
           <Input
             id="price"
             name="price"
@@ -162,7 +197,7 @@ const Page = () => {
           />
         </div>
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={loading}>
           Add Item
         </Button>
       </form>

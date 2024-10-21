@@ -13,7 +13,7 @@ export default async function Header() {
   return (
     <nav className="w-full flex justify-between items-center px-16 py-4">
       <div className="font-extrabold uppercase">
-        {restuarantName}&apos;s Menu
+        {restuarantName}&apos;s Meal
       </div>
       <aside>
         <Navbar user={restuarantName} />

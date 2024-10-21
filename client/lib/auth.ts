@@ -3,6 +3,7 @@ import { NextAuthOptions, Profile } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
 import { CredentialInput } from "next-auth/providers/credentials";
 import axios from "axios";
+import { LOGIN } from "./APIsData";
 
 interface User {
   email: string;
@@ -11,8 +12,6 @@ interface User {
 interface Account {
   provider: "google";
 }
-
-const LOGIN = process.env.LOGIN!;
 
 interface SignInParams {
   user: User | AdapterUser;

@@ -1,9 +1,12 @@
-import Header from "./UI/Header";
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
-export default function Home() {
-  return (
-    <div className="border">
-      <Header />
-    </div>
-  );
+export default async function Home() {
+  const session = await getServerSession(authOptions);
+  if (session?.user) {
+    redirect("/admin/dashboard");
+  } else {
+    redirect("/api/auth/signin");
+  }
 }

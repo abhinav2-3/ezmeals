@@ -93,15 +93,6 @@ const Navbar = ({ user }: User) => {
         >
           {user === "User" ? "Login" : "Logout"}
         </Button>
-        {/* <button
-          className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-md"
-          onClick={async () => {
-            await signOut();
-            router.push("/api/auth/signin");
-          }}
-        >
-          {user === "User" ? "Login" : "Logout"}
-        </button> */}
       </div>
     </nav>
   );

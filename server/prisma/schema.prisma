@@ -13,8 +13,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Meal_Type {
+  drink
+  meal
+}
+
+enum Meal_Size {
+  small
+  medium
+  large
+}
+
 model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  name  String
+  id     Int    @id @default(autoincrement())
+  email  String @unique
+  name   String
+  userId String
+}
+
+model Item {
+  id       Int       @id @default(autoincrement())
+  shopId   String    @unique
+  name     String
+  imageUrl String
+  type     Meal_Type
+  size     Meal_Size
+  quantity Int
+  price    Int
+}
+
+model Order {
+  id          Int       @id @default(autoincrement())
+  name        String
+  type        Meal_Type
+  size        Meal_Size
+  quantity    Int
+  amount      Int
+  shopId      String
+  orderedDate DateTime
 }
