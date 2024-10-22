@@ -14,9 +14,6 @@ import {
 } from "@/components/ui/select";
 import axios from "axios";
 import { ADDITEM } from "@/lib/APIsData";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { getSession, useSession } from "next-auth/react";
 
 type FormData = {
   name: string;
@@ -26,11 +23,11 @@ type FormData = {
   quantity: number;
   price: number;
   extraCost: number;
+  userId: string | null;
 };
 
 const Page = () => {
-  const session = useSession();
-  console.log(session.data);
+  const userId: string | null = localStorage.getItem("userId");
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
@@ -41,6 +38,7 @@ const Page = () => {
     quantity: 1,
     price: 0,
     extraCost: 0,
+    userId: userId,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,24 +52,23 @@ const Page = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
     console.log(formData);
-    // try {
-    //   console.log(formData);
-    //   setLoading(true);
-    //   // const response = await axios.post(ADDITEM, { formData });
-    //   // console.log(response.data);
-    //   toast({
-    //     title: "Item added successfully!",
-    //     description: "The new item is now listed.",
-    //   });
-    // } catch (error) {
-    //   console.log(error);
-    //   toast({ title: "Error while adding" });
-    //   setLoading(false);
-    // } finally {
-    //   setLoading(false);
-    // }
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const response = await axios.post(ADDITEM, { formData });
+      console.log(response.data);
+      toast({
+        title: "Item added successfully!",
+        description: "The new item is now listed.",
+      });
+    } catch (error) {
+      console.log(error);
+      toast({ title: "Error while adding" });
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -155,20 +152,6 @@ const Page = () => {
             </SelectContent>
           </Select>
         </div>
-        {/* {formData?.size !== "small" && formData?.size !== "" && (
-          <div>
-            <Label htmlFor="size">Extra Price of Size</Label>
-            <Input
-              id="extraCost"
-              name="extraCost"
-              type="number"
-              value={formData.extraCost}
-              onChange={handleInputChange}
-              className="mt-2"
-              required
-            />
-          </div>
-        )} */}
 
         <div>
           <Label htmlFor="quantity">Quantity</Label>
