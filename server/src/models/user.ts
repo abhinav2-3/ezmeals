@@ -29,7 +29,7 @@ interface IItem extends Document {
 }
 
 interface IOrder extends Document {
-  imageURL: string;
+  type: MealType;
   quantity: number;
   name: string;
   amount: number;
@@ -91,8 +91,9 @@ const itemSchema = new Schema<IItem>({
 // ORDER MODEL
 
 const orderSchema = new Schema<IOrder>({
-  imageURL: {
+  type: {
     type: String,
+    enum: Object.values(MealType),
     required: true,
   },
   name: {

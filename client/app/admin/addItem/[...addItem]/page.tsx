@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import axios from "axios";
 import { ADDITEM } from "@/lib/APIsData";
+import { usePathname } from "next/navigation";
 
 type FormData = {
   name: string;
@@ -21,13 +22,19 @@ type FormData = {
   type: "drink" | "meal";
   size: string;
   quantity: number;
-  price: number;
+  // price: number;
   extraCost: number;
   userId: string | null;
+  sizeOptions: {
+    small: number;
+    medium: number;
+    large: number;
+  };
 };
 
 const Page = () => {
-  const userId: string | null = localStorage.getItem("userId");
+  const path = usePathname();
+  const id = path.split("/")[3];
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
@@ -36,9 +43,10 @@ const Page = () => {
     type: "meal",
     size: "",
     quantity: 1,
-    price: 0,
+    // price: 0,
     extraCost: 0,
-    userId: userId,
+    userId: id,
+    sizeOptions: { small: 0, medium: 0, large: 0 },
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,8 +59,14 @@ const Page = () => {
     setFormData((prev) => ({ ...prev, imageUrl: file }));
   };
 
+  const handleSizeOptionChange = (size: string, price: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      sizeOptions: { ...prev.sizeOptions, [size]: price },
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log(formData);
     e.preventDefault();
     try {
       setLoading(true);
@@ -132,7 +146,7 @@ const Page = () => {
           </Select>
         </div>
 
-        <div>
+        {/* <div>
           <Label htmlFor="size">Size</Label>
           <Select
             onValueChange={(value) =>
@@ -151,8 +165,21 @@ const Page = () => {
               <SelectItem value="large">Large</SelectItem>
             </SelectContent>
           </Select>
+        </div> */}
+        <div className="space-y-2">
+          <h3>Size Options (Price)</h3>
+          {["small", "medium", "large"].map((size) => (
+            <div key={size} className="flex items-center space-x-2">
+              <label className="w-20 capitalize">{size}</label>
+              <input
+                type="number"
+                placeholder={`Price for ${size}`}
+                onChange={(e) => handleSizeOptionChange(size, +e.target.value)}
+                className="border p-2 w-full"
+              />
+            </div>
+          ))}
         </div>
-
         <div>
           <Label htmlFor="quantity">Quantity</Label>
           <Input
@@ -167,7 +194,7 @@ const Page = () => {
           />
         </div>
 
-        <div>
+        {/* <div>
           <Label htmlFor="price">Price (*per small item)</Label>
           <Input
             id="price"
@@ -178,7 +205,7 @@ const Page = () => {
             className="mt-2"
             required
           />
-        </div>
+        </div> */}
 
         <Button type="submit" className="w-full" disabled={loading}>
           Add Item
