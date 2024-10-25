@@ -14,6 +14,11 @@ export interface DataType {
   quantity: number;
   amount: number;
   orderedDate: string;
+  imageUrl: string;
+  id: string;
+  qty: number;
+  price: number;
+  itemsize: string;
 }
 
 const Order = () => {

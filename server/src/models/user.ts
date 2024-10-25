@@ -25,7 +25,11 @@ interface IItem extends Document {
   type: MealType;
   size: MealSize;
   quantity: number;
-  price: number;
+  sizeOptions: {
+    small: number;
+    medium: number;
+    large: number;
+  };
 }
 
 interface IOrder extends Document {
@@ -35,6 +39,7 @@ interface IOrder extends Document {
   amount: number;
   shopId: string;
   orderedDate: Date;
+  size: string;
 }
 
 const userSchema = new Schema<IUser>({
@@ -73,34 +78,38 @@ const itemSchema = new Schema<IItem>({
     enum: Object.values(MealType),
     required: true,
   },
-  size: {
-    type: String,
-    enum: Object.values(MealSize),
-    required: true,
-  },
+  // size: {
+  //   type: String,
+  //   enum: Object.values(MealSize),
+  //   required: true,
+  // },
   quantity: {
     type: Number,
     required: true,
   },
-  price: {
-    type: Number,
-    required: true,
+  sizeOptions: {
+    small: { type: Number, required: true },
+    medium: { type: Number, required: true },
+    large: { type: Number, required: true },
   },
 });
 
 // ORDER MODEL
 
 const orderSchema = new Schema<IOrder>({
-  type: {
-    type: String,
-    enum: Object.values(MealType),
-    required: true,
-  },
+  // type: {
+  //   type: String,
+  //   enum: Object.values(MealType),
+  //   required: true,
+  // },
   name: {
     type: String,
     required: true,
   },
-
+  size: {
+    type: String,
+    required: true,
+  },
   quantity: {
     type: Number,
     required: true,

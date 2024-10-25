@@ -14,15 +14,14 @@ export const add_Item = async (req: Request, res: Response): Promise<any> => {
   }
 
   try {
-    const amount: number = Number(formData.price) * Number(formData.quantity);
     await Item.create({
       name: formData.name,
       imageUrl: formData.imageUrl,
-      price: amount,
       quantity: Number(formData.quantity),
       size: formData.size,
       type: formData.type,
       shopId: formData.userId,
+      sizeOptions: formData.sizeOptions,
     });
     return res.status(201).json({ status: true, message: "Item Added" });
   } catch (error: any) {
@@ -52,12 +51,13 @@ export const getMenu = async (req: Request, res: Response): Promise<any> => {
 
 export const placeOrder = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { imageUrl, name, amount, quantity, userId } = req.body;
+    const { size, name, amount, quantity, userId } = req.body;
 
     const order = new Order({
-      imageURL: imageUrl,
       name,
       amount,
+      // type,
+      size,
       quantity,
       shopId: userId,
     });

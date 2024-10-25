@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -9,50 +9,64 @@ import {
 } from "@/components/ui/select";
 import { SelectGroup } from "@radix-ui/react-select";
 import { Button } from "./ui/button";
+import Image from "next/image";
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/lib/features/cartSlice";
 
 export interface CardProps {
   imageUrl: string;
   name: string;
   type: string;
-  size: string;
+  _id: string;
   quantity: number;
-  price: number;
+  sizeOptions: {
+    small: number;
+    medium: number;
+    large: number;
+  };
 }
 
-const Card: React.FC<CardProps> = ({ imageUrl, name, quantity, price }) => {
+const Card: React.FC<CardProps> = ({
+  _id,
+  imageUrl,
+  name,
+  quantity,
+  sizeOptions,
+}) => {
+  const { small, medium, large } = sizeOptions;
   const [qty, setQty] = useState<number>(1);
-  const [amount, setprice] = useState<number>(price);
-  const [itemsize, setItemSize] = useState<string>("small");
-  const [sizeCost, setSizeCost] = useState<number>(0);
+  const dispatch = useDispatch();
+  const [itemsize, setItemSize] = useState<"small" | "medium" | "large">(
+    "small"
+  );
 
-  const quantityHandler = (value: string) => {
-    const selectedQty = parseInt(value);
-    setQty(selectedQty);
-    console.log(qty, selectedQty);
-  };
-
-  useEffect(() => {
-    if (itemsize === "medium") setSizeCost(45);
-    else if (itemsize === "large") setSizeCost(70);
-    else setSizeCost(0);
-    setprice(price * qty + sizeCost);
-  }, [qty, price, sizeCost, itemsize]);
+  // Use `useMemo` to optimize the price calculation.
+  const price = useMemo(() => {
+    const sizePrice =
+      itemsize === "small" ? small : itemsize === "medium" ? medium : large;
+    return sizePrice * qty;
+  }, [qty, itemsize, small, medium, large]);
 
   return (
     <div className="w-[28%] bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-      <img
-        className="w-full h-48 object-contain border-b py-2"
-        src={imageUrl}
-        alt={name}
-        width={100}
-        height={100}
-      />
+      <figure className="w-full h-[28vh]">
+        <Image
+          src={imageUrl}
+          alt={name}
+          width={100}
+          height={100}
+          loading="lazy"
+          className="object-contain w-full h-full"
+        />
+      </figure>
       <div className="p-6 flex flex-col gap-3">
         <h2 className="text-xl font-semibold text-gray-800">{name}</h2>
         <div className="flex gap-4">
           <Select
             defaultValue="small"
-            onValueChange={(value: string) => setItemSize(value)}
+            onValueChange={(value: string) =>
+              setItemSize(value as "small" | "medium" | "large")
+            }
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select Size" />
@@ -67,7 +81,10 @@ const Card: React.FC<CardProps> = ({ imageUrl, name, quantity, price }) => {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Select defaultValue={"1"} onValueChange={quantityHandler}>
+          <Select
+            defaultValue={"1"}
+            onValueChange={(value) => setQty(parseInt(value))}
+          >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Select a Quantity" />
             </SelectTrigger>
@@ -84,10 +101,26 @@ const Card: React.FC<CardProps> = ({ imageUrl, name, quantity, price }) => {
             </SelectContent>
           </Select>
         </div>
-        <p className="text-gray-800 font-bold text-lg">Price: ₹{amount}</p>
+        <p className="text-gray-800 font-bold text-lg">Price: ₹{price}</p>
         <div className="flex justify-around">
           <Button>Buy Now</Button>
-          <Button variant={"secondary"} className="border">
+          <Button
+            variant={"secondary"}
+            className="border"
+            onClick={() =>
+              dispatch(
+                addToCart({
+                  _id,
+                  imageUrl,
+                  name,
+                  itemsize,
+                  qty,
+                  price,
+                  maxQty: quantity,
+                })
+              )
+            }
+          >
             Add in Cart
           </Button>
         </div>

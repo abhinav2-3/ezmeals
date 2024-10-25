@@ -10,8 +10,8 @@ export const generateUserId = () => {
   return prefix + randomNumber;
 };
 
-export function formatDate(dateString: string): string {
-  const date = new Date(dateString);
+export function formatDate(dateString: string | undefined): string {
+  const date = new Date(dateString!);
   const day = String(date.getDate()).padStart(2, "0"); // Add leading zero if needed
   const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
   const year = date.getFullYear();

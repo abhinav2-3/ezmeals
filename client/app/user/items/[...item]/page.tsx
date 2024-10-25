@@ -18,19 +18,18 @@ const Items = () => {
   useEffect(() => {
     dispatch(fetchMenu(shopId));
   }, [dispatch, shopId]);
-  console.log(menu);
   return (
     <div className="flex px-16 py-8 gap-8 w-full justify-center items-center flex-wrap">
       {menu?.map((m: CardProps, i) => {
         return (
           <Card
             key={i}
+            _id={m._id}
             name={m.name}
             type={m.type}
             imageUrl={m.imageUrl}
-            size={m.size}
             quantity={m.quantity}
-            price={m.price}
+            sizeOptions={m?.sizeOptions}
           />
         );
       })}

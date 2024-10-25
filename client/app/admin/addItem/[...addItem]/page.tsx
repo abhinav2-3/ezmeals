@@ -20,9 +20,9 @@ type FormData = {
   name: string;
   imageUrl: string | File | null;
   type: "drink" | "meal";
-  size: string;
+
   quantity: number;
-  // price: number;
+
   extraCost: number;
   userId: string | null;
   sizeOptions: {
@@ -41,9 +41,7 @@ const Page = () => {
     name: "",
     imageUrl: "",
     type: "meal",
-    size: "",
     quantity: 1,
-    // price: 0,
     extraCost: 0,
     userId: id,
     sizeOptions: { small: 0, medium: 0, large: 0 },
